@@ -14,7 +14,8 @@
     "express": "*",
     "mongodb": "*",
     "multer": "^0.1.8",
-    "underscore": "*"
+    "underscore": "*",
+    "socket.io": "*"
   },
   "author": "Christian Kvalheim",
   "license": "Apache 2.0",

@@ -3,6 +3,8 @@ var express = require('express'),
     bodyParser = require('body-parser'),
     multer = require('multer'),
     MongoClient = require('mongodb');
+var server = require("http").Server(app);
+var io = require("socket.io").listen(server);
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));  //  parser url
@@ -38,13 +40,12 @@ MongoClient.connect('mongodb://localhost:27017/sijishangdong', function (err, db
         ticketIdList = docs[0]['idlist'];
     });
 
+    socket.on('choujiang', onChoujiangHandler);
+    socket.on('userInfo', onGetUserInfoHandler);
 
-	app.get('/', function(req, res, next) {
-		res.send('<p>hello world</p>');	
-	});
+    function onChoujiangHandler (socket) {
+        var result = '';
 
-    //  get ticket result
-    app.get('/sijishangdong/userinfo', function(req, res, next) {
         console.log('someone join to this game');
 
         db.collection('visitedNumber').update({"visitedNumber": {$exists: 1}}, {$inc: {"visitedNumber": 1}});
@@ -57,7 +58,7 @@ MongoClient.connect('mongodb://localhost:27017/sijishangdong', function (err, db
             if (visitedNumber > 2400) {
                 //  return false
                 console.log(visitedNumber  + ':' + 10086);
-                res.status(10086).send('game over');
+                result = 10086;
             } else {
                 var isGetGift = false;
 
@@ -71,33 +72,34 @@ MongoClient.connect('mongodb://localhost:27017/sijishangdong', function (err, db
 
                 if (isGetGift) {
                     console.log(visitedNumber  + ':' + 200);
-                    res.status(200).send('get gift');
+                    result = 200;
                 } else {
                     console.log(visitedNumber  + ':' + 10010);
-                    res.status(10010).send('not get gift');
+                    result = 10010;
                 }
             }
+
+            //  return result
+            socket.emit('gameResult', {"result": result});
         });
-    });
+    }
 
-    //  post userinfo
-    app.post('/sijishangdong/userinfo', function (req, res, next) {
-		console.log("Some one post they info...:");
+    function onGetUserInfoHandler (data) {
+        console.log("Some one post they info...:");
+        var data = data;
 
-        var username = req.body.username;
-        var phone = req.body.phone;
-
-        if (typeof username == 'undefined' || typeof phone == 'undefined') {
+        if (data.username || data.phone) {
             console.log('err');
         } else {
-            console.log(username, phone);
+            console.log(data.username, data.phone);
             //  insert data to database
-            db.collection('userInfo').insert({"username": username, "phone": phone}, function () {
-                //  response client
-                res.send("success to save user data");
+            db.collection('userInfo').insert(data, function (err, data) {
+
             });
         }
-    });
+
+        socket.emit('storeInfoResult', {"result": true});
+    }
 
     app.listen(88, "120.26.48.94");
     console.log('Server running at 120.26.48.94:88');
