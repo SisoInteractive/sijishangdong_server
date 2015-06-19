@@ -4,7 +4,7 @@ var express = require('express'),
     multer = require('multer'),
     MongoClient = require('mongodb');
 var server = require("http").Server(app);
-var io = require("socket.io").listen(server);
+var socket = require("socket.io").listen(server);
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));  //  parser url
