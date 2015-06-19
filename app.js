@@ -61,7 +61,7 @@ MongoClient.connect('mongodb://localhost:27017/sijishangdong', function (err, db
                 var isGetGift = false;
 
                 for (var i = 0; i < ticketIdList.length; i++) {
-                    console.log(visitedNumber, ":::::" , ticketIdList[i]);
+                    //console.log(visitedNumber, ":::::" , ticketIdList[i]);
                     if (visitedNumber == ticketIdList[i]) {
                         isGetGift = true;
                         break;
@@ -71,7 +71,6 @@ MongoClient.connect('mongodb://localhost:27017/sijishangdong', function (err, db
                 if (isGetGift) {
                     res.status(200).send('get gift');
                 } else {
-                    console.log("length::::", ticketIdList.length);
                     res.status(10010).send('not get gift');
                 }
             }
@@ -80,8 +79,6 @@ MongoClient.connect('mongodb://localhost:27017/sijishangdong', function (err, db
 
     //  post userinfo
     app.post('/sijishangdong/userinfo', function (req, res, next) {
-        res.header("Access-Control-Allow-Origin", "*");
-        res.header("Access-Control-Allow-Headers", "X-Requested-With");
 		console.log("Some one post they info...:");
 
         var username = req.body.username;
