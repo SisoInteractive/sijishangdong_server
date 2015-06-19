@@ -56,6 +56,7 @@ MongoClient.connect('mongodb://localhost:27017/sijishangdong', function (err, db
 
             if (visitedNumber > 2400) {
                 //  return false
+                console.log(visitedNumber  + ':' + 10086);
                 res.status(10086).send('game over');
             } else {
                 var isGetGift = false;
@@ -69,8 +70,10 @@ MongoClient.connect('mongodb://localhost:27017/sijishangdong', function (err, db
                 }
 
                 if (isGetGift) {
+                    console.log(visitedNumber  + ':' + 200);
                     res.status(200).send('get gift');
                 } else {
+                    console.log(visitedNumber  + ':' + 10010);
                     res.status(10010).send('not get gift');
                 }
             }
